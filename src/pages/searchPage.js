@@ -1,49 +1,81 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import Autocomplete from 'react-autocomplete';
+import LogoImg from '../static/logo.png';
+import { getAutocompleteOptions, getCurrentPosition, getLocationByLatLng } from '../fetchHelper';
+import SelectedLocation from './selectedLocation';
+import { useLocation } from 'react-router-dom';
 
-const Test = () => {
 
-    const [inputValue, setInputValue] = useState('');
-    const [items, setItems] = useState([
-        { label: 'aaa' },
-        { label: 'bbb' },
-        { label: 'ccc' },
-    ])
+const SearchPage = () => {
+
+    let location = useLocation();
+
+    const hasPreSelectedLocation = location?.state?.location;
+
+    const [inputValue, setInputValue] = useState(hasPreSelectedLocation?.LocalizedName || '');
+    const [resultsList, setResultsList] = useState([]);
+    const [currentLocation, setCurrentLocation] = useState(hasPreSelectedLocation);
 
     useEffect(() => {
-        if (inputValue?.length > 2) {
-            fetchResults();
+        initCurrentPoisition();
+    }, [])
+
+    const initCurrentPoisition = async () => {
+        if (!currentLocation) {
+            const pos = await getCurrentPosition();
+            if (pos) {
+                const location = await getLocationByLatLng(pos.coords);
+                if (location) {
+                    setCurrentLocation(location);
+                    setInputValue(location.EnglishName)
+                }
+            }
         }
-    }, [inputValue])
 
-    const fetchResults = async () => {
-        await new Promise(resolve => setTimeout(resolve, 3000));
-        setItems([{ label: 'tom' }, { label: 'yosi' }])
+    }
 
+    const handleValueChange = (val) => {
+        setInputValue(val);
+        if (val.length > 1) {
+            fetchResults(val)
+        }
+    }
+
+    const fetchResults = async (val) => {
+        const res = await getAutocompleteOptions(val);
+        setResultsList(res);
+    }
+
+    const handlePlaceSelected = (inputValue, item) => {
+        setInputValue(inputValue)
+        setCurrentLocation(item);
     }
 
 
     return (
         <Wrapper>
-            {/* <Input /> */}
+            <Logo src={LogoImg} />
             <Autocomplete
-                getItemValue={item => item.label}
-                items={items}
+                getItemValue={item => item.LocalizedName}
+                items={resultsList}
                 renderItem={(item, isHighlighted) =>
-                    <div style={{ background: isHighlighted ? 'lightgray' : 'white' }}>
-                        {item.label}
-                    </div>
+                    <SingleOption key={item.Key} isHighlighted={isHighlighted}>
+                        {item.LocalizedName}
+                    </SingleOption>
                 }
                 value={inputValue}
-                onChange={e => setInputValue(e.target.value)}
-                onSelect={val => setInputValue(val)}
+                onChange={e => handleValueChange(e.target.value.replace(/[^A-Za-z\s:/]/g, ''))}
+                onSelect={handlePlaceSelected}
+                renderInput={props => <Input {...props} placeholder={'Search for new loaction'} />}
             />
+
+            {currentLocation && <SelectedLocation key={currentLocation.Key} item={currentLocation} />}
         </Wrapper>
     )
 }
 
-export default Test;
+export default SearchPage;
 
 // CSS //
 const Wrapper = styled.div`
@@ -52,12 +84,24 @@ height: 100%;
 display: flex;
 flex-direction: column;
 align-items: center;
-padding-top: 5rem;
+padding-bottom: 5rem;
 `
 
 const Input = styled.input`
 width: 50rem;
 height: 4.8rem;
-border-radius: .5rem;
-padding: 0 1.6rem;
+background-color: transparent;
+border-bottom: .1rem solid black;
+`
+
+const Logo = styled.img`
+width: 35rem;
+height: 30rem;
+margin-bottom: -3rem;
+`
+
+const SingleOption = styled.div`
+padding: .5rem 0;
+cursor: pointer;
+background-color: ${p => p.isHighlighted ? 'lightgray' : '#fff'};
 `

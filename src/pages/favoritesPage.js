@@ -1,22 +1,41 @@
 import React from 'react';
 import styled from 'styled-components';
+import { useSelector } from 'react-redux';
+import { getTemperatureString } from '../helper';
+import { useHistory } from 'react-router-dom';
+import { SEARCH_PAGE } from '../Consts';
 
 const FavoritesPage = () => {
 
-    const dummylist = [{ name: 'Tel aviv', temp: 26.3, status: 'Sunny' }, {}, {}, {}, {}]
+    const history = useHistory();
+
+    const handleViewLocationClicked = (item) => {
+        history.push({
+            pathname: SEARCH_PAGE,
+            state: { location: item }
+        })
+    }
+
+    const favoriteList = useSelector(state => state.favorites);
 
     return (
         <Wrapper>
-            {dummylist?.length > 0 &&
-                dummylist.map((item, index) =>
+            {favoriteList?.length > 0 ?
+                favoriteList.map((item, index) =>
                     <Conatiner key={index}>
                         <VBox>
-                            <LocationName>{item.name}</LocationName>
-                            <span>{item.temp}</span>
+                            <LocationName>{item.LocalizedName}</LocationName>
+                            <span>ID: {item.Key}</span>
+                            <span>{getTemperatureString(item.Conditions)}</span>
                         </VBox>
-                        <span>{item.status}</span>
+                        <span>{item.Conditions?.WeatherText}</span>
+
+                        <Button onClick={() => handleViewLocationClicked(item)}>View Forcast</Button>
                     </Conatiner>
-                )}
+                )
+                :
+                <NoFavorites>No Favorite yet, go to "Search" page and add some.</NoFavorites>
+            }
         </Wrapper>
     )
 }
@@ -46,6 +65,7 @@ margin-inline-end: 3rem;
 margin-bottom: 3rem;
 color: #fff;
 font-size: 1.8rem;
+border-radius: .5rem;
 `
 
 const VBox = styled.div`
@@ -57,4 +77,15 @@ width: 100%;
 
 const LocationName = styled.span`
 margin-bottom: 2rem;
+`
+
+const NoFavorites = styled.span`
+font-size: 3rem;
+`
+
+const Button = styled.button`
+padding: 0.6rem 1.5rem;
+font-size: 1.6rem;
+background-color: red;
+border-radius: .5rem;
 `

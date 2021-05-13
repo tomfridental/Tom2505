@@ -1,22 +1,21 @@
-export const ACTION_LIGHT_THEME = 'LIGHT';
-export const ACTION_DARK_THEME = 'DARK';
-export const ACTION_SWITCH_THEME = 'SWITCH';
-
-const LIGHT_THEME = 'lightTheme';
-const DARK_THEME = 'darkTheme';
+export const ACTION_TOGGLE_FAVORITES = 'TOGGLE_FAVORITES';
 
 export default function filtersReducer(state = [], action) {
 
-  switch (action.type) {
-    case 1: {
-      return { ...state, themeName: LIGHT_THEME }
-    }
-    case 2: {
-      return { ...state, themeName: DARK_THEME }
-    }
-    case 3: {
-      const newTheme = state.themeName !== DARK_THEME ? DARK_THEME : LIGHT_THEME;
-      return { ...state, themeName: newTheme }
+  const { location, type } = action;
+
+  switch (type) {
+    case ACTION_TOGGLE_FAVORITES: {
+
+      const isItemAlreadyAdded = state.find(item => item.Key === location.Key);
+
+      let stateCopy = state.concat();
+      if (isItemAlreadyAdded) {
+        stateCopy = stateCopy.filter(item => item.Key !== location.Key)
+      } else {
+        stateCopy.push(location)
+      }
+      return stateCopy;
     }
     default:
       return state

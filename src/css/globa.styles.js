@@ -18,6 +18,9 @@ const GlobalStyles = createGlobalStyle`
         a{
             text-decoration: none;
         }
+        button{
+            cursor: pointer;
+        }
         *{
             margin: 0;
             padding: 0;

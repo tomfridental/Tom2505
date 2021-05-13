@@ -1,8 +1,8 @@
 const themes = {
-    lightTheme: {
+    heroloTheme: {
         mainColor: '#674ea7'
     },
-    darkTheme: {
+    blueTheme: {
         mainColor: '#1b5096'
     }
 };

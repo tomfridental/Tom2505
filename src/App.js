@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
+import React from 'react';
 import styled, { ThemeProvider } from 'styled-components';
 import GlobalStyles from './css/globa.styles';
 import Themes from './css/themes';
 import TopBar from './TopBar';
-import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+import { HashRouter as Router, Route, Switch } from 'react-router-dom';
 import { SEARCH_PAGE, FAVORITES_PAGE } from './Consts';
 import SearchPage from './pages/searchPage';
 import FavoritesPage from './pages/favoritesPage';
@@ -11,7 +11,7 @@ import { useSelector } from 'react-redux';
 
 const App = () => {
 
-    const { themeName } = useSelector(state => state.theme);
+    const { themeName } = useSelector(state => state.config);
 
     return (
         <ThemeProvider theme={Themes[themeName]}>
@@ -23,7 +23,7 @@ const App = () => {
                         <Route path={FAVORITES_PAGE}>
                             <FavoritesPage />
                         </Route>
-                        <Route exact={SEARCH_PAGE}>
+                        <Route path={SEARCH_PAGE}>
                             <SearchPage />
                         </Route>
 
