@@ -41,7 +41,7 @@ export const getLocationForcast = async (locationKey) => {
     const queryString = `apikey=${API_KEY}&details=false&language=en-us&metric=true`;
     const res = await fetchGet(url, queryString);
 
-    if (res ?.DailyForecasts ?.length > 0) {
+    if (res?.DailyForecasts?.length > 0) {
         for (const day of res.DailyForecasts) {
             day.ImperialTemp = {
                 Maximum: convertMetricToImperial(day.Temperature.Maximum),

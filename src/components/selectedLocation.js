@@ -37,7 +37,7 @@ const SelectedLocation = ({ selectedLocation }) => {
     const initConditions = async () => {
 
         const res = await getLocationConditions(selectedLocation.Key);
-        if (res ?.[0]) {
+        if (res?.[0]) {
             return res[0];
         }
         return null;
@@ -46,7 +46,7 @@ const SelectedLocation = ({ selectedLocation }) => {
     const initForcast = async () => {
 
         const res = await getLocationForcast(selectedLocation.Key);
-        if (res ?.DailyForecasts) {
+        if (res?.DailyForecasts) {
             return res;
         }
         return null;
@@ -97,7 +97,7 @@ const SelectedLocation = ({ selectedLocation }) => {
                     </LocationText>
 
                     <ForCast>
-                        {selectedLocation.Forcast ?.DailyForecasts ?.length > 0 ?
+                        {selectedLocation.Forcast?.DailyForecasts?.length > 0 ?
                             selectedLocation.Forcast.DailyForecasts.map((day, dayIndex) =>
                                 <SingleForcast key={dayIndex}>
                                     <DayName>{getDayName(day.Date)}</DayName>
