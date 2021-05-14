@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import { Link } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { getTemperatureString } from '../helper';
 import { useHistory } from 'react-router-dom';
@@ -37,9 +38,9 @@ const FavoritesPage = () => {
                     </Conatiner>
                 )
                 :
-                <NoFavorites>No Favorite yet, go to "Search" page and add some.</NoFavorites>
+                <NoFavorites>No Favorite yet, go to <SearchLink to={SEARCH_PAGE}>Search</SearchLink> page and add some.</NoFavorites>
             }
-        </Wrapper>
+        </Wrapper >
     )
 }
 
@@ -69,6 +70,7 @@ margin-bottom: 3rem;
 color: #fff;
 font-size: 1.8rem;
 border-radius: .5rem;
+box-shadow: 0 0 1rem 0 rgba(51,51,51,0.51);
 animation: open 500ms;
 
 @keyframes open {
@@ -98,4 +100,12 @@ font-size: 1.6rem;
 background-color:  ${p => lighten(0.2, p.theme.mainColor)};
 border-radius: .5rem;
 color: #fff;
+
+&:hover{
+    background-color:  ${p => lighten(0.1, p.theme.mainColor)}; 
+}
+`
+
+const SearchLink = styled(Link)`
+
 `

@@ -15,12 +15,12 @@ import WEATHER_IMG_CLOUDY from '../static/cloudy.png'
 import WEATHER_IMG_SUNNY from '../static/sunny.png'
 
 
-const SelectedLocation = ({ item }) => {
+const SelectedLocation = ({ selectedLocation }) => {
 
     const dispatch = useDispatch();
     const favoriteList = useSelector(state => state.favorites);
     const tempUnit = useSelector(state => state.config.tempUnit);
-    const isFavorite = useMemo(() => favoriteList.find(el => el.Key === item.Key) ? true : false, [favoriteList])
+    const isFavorite = useMemo(() => favoriteList.find(el => el.Key === selectedLocation.Key) ? true : false, [favoriteList])
     const isMetric = tempUnit === METRIC_UNIT;
 
     useEffect(() => {
@@ -28,15 +28,15 @@ const SelectedLocation = ({ item }) => {
     }, [])
 
     const initData = async () => {
-        if (!item.Conditions || !item.Forcast) {
+        if (!selectedLocation.Conditions || !selectedLocation.Forcast) {
             let res = await Promise.all([initConditions(), initForcast()]);
-            dispatch({ type: UPDATE_SELECTED_LOCATION, location: { ...item, Conditions: res[0], Forcast: res[1] } })
+            dispatch({ type: UPDATE_SELECTED_LOCATION, location: { ...selectedLocation, Conditions: res[0], Forcast: res[1] } })
         }
     }
 
     const initConditions = async () => {
 
-        const res = await getLocationConditions(item.Key);
+        const res = await getLocationConditions(selectedLocation.Key);
         if (res ?.[0]) {
             return res[0];
         }
@@ -45,7 +45,7 @@ const SelectedLocation = ({ item }) => {
 
     const initForcast = async () => {
 
-        const res = await getLocationForcast(item.Key);
+        const res = await getLocationForcast(selectedLocation.Key);
         if (res ?.DailyForecasts) {
             return res;
         }
@@ -54,12 +54,12 @@ const SelectedLocation = ({ item }) => {
 
     const toggleFavoriteMode = () => {
         const notyfMsg = isFavorite ? 'Removed from favorites' : 'Added to favorites'
-        dispatch({ type: ACTION_TOGGLE_FAVORITES, location: item })
+        dispatch({ type: ACTION_TOGGLE_FAVORITES, location: selectedLocation })
         displayNotyf(notyfMsg, { type: 'success' })
     }
 
     const loadWeahterImg = () => {
-        const temperature = item ?.Conditions ?.Temperature ?.Metric ?.Value;
+        const temperature = selectedLocation?.Conditions?.Temperature?.Metric?.Value;
 
         if (temperature > 16) {
             return WEATHER_IMG_SUNNY;
@@ -72,7 +72,7 @@ const SelectedLocation = ({ item }) => {
 
     return (
         <ResultsBox>
-            {!item.Conditions ?
+            {!selectedLocation.Conditions ?
                 <ProcessingContainer>
                     <Processing />
                 </ProcessingContainer>
@@ -82,8 +82,8 @@ const SelectedLocation = ({ item }) => {
                         <Location>
                             <Image src={loadWeahterImg()} />
                             <VBox>
-                                <LocationName>{item.LocalizedName}</LocationName>
-                                <div>{getTemperatureString(item.Conditions, isMetric)}</div>
+                                <LocationName>{selectedLocation.LocalizedName}</LocationName>
+                                <div>{getTemperatureString(selectedLocation.Conditions, isMetric)}</div>
                             </VBox>
                         </Location>
 
@@ -93,12 +93,12 @@ const SelectedLocation = ({ item }) => {
                     </Header>
 
                     <LocationText>
-                        {item.Conditions.WeatherText}
+                        {selectedLocation.Conditions.WeatherText}
                     </LocationText>
 
                     <ForCast>
-                        {item.Forcast ?.DailyForecasts ?.length > 0 ?
-                            item.Forcast.DailyForecasts.map((day, dayIndex) =>
+                        {selectedLocation.Forcast ?.DailyForecasts ?.length > 0 ?
+                            selectedLocation.Forcast.DailyForecasts.map((day, dayIndex) =>
                                 <SingleForcast key={dayIndex}>
                                     <DayName>{getDayName(day.Date)}</DayName>
                                     <span>{getTempRangeString(day, isMetric)}</span>
@@ -124,6 +124,7 @@ width: 80rem;
 min-height: 30rem;
 border-radius: .5rem;
 border: .2rem solid ${p => p.theme.mainColor};
+box-shadow: 0 0 1rem 0 rgba(51,51,51,0.51);
 `
 
 const VBox = styled.div`
