@@ -5,7 +5,7 @@ import { getTemperatureString } from '../helper';
 import { useHistory } from 'react-router-dom';
 import { SEARCH_PAGE } from '../Consts';
 import { lighten } from 'polished';
-import { UPDATE_SELECTED_LOCATION } from '../state/reducers/configReducer';
+import { UPDATE_SELECTED_LOCATION, METRIC_UNIT } from '../state/reducers/configReducer';
 
 const FavoritesPage = () => {
 
@@ -18,6 +18,8 @@ const FavoritesPage = () => {
     }
 
     const favoriteList = useSelector(state => state.favorites);
+    const tempUnit = useSelector(state => state.config.tempUnit);
+    const isMetric = tempUnit === METRIC_UNIT;
 
     return (
         <Wrapper>
@@ -27,7 +29,7 @@ const FavoritesPage = () => {
                         <VBox>
                             <LocationName>{item.LocalizedName}</LocationName>
                             <span>ID: {item.Key}</span>
-                            <span>{getTemperatureString(item.Conditions)}</span>
+                            <span>{getTemperatureString(item.Conditions, isMetric)}</span>
                         </VBox>
                         <span>{item.Conditions?.WeatherText}</span>
 

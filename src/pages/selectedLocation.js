@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import styled from 'styled-components';
 import { getLocationConditions, getLocationForcast } from '../fetchHelper';
 import Processing from './processing';
@@ -15,8 +15,6 @@ import IS_NOT_FAVORITE_IMG from '../static/favorite_no.png';
 
 const SelectedLocation = ({ item }) => {
 
-    const [forcast, setForcast] = useState(null)
-
     const dispatch = useDispatch();
     const favoriteList = useSelector(state => state.favorites);
     const tempUnit = useSelector(state => state.config.tempUnit);
@@ -24,36 +22,45 @@ const SelectedLocation = ({ item }) => {
     const isMetric = tempUnit === METRIC_UNIT;
 
     useEffect(() => {
-        initConditions();
-        initForcast();
+        initData()
     }, [])
 
-    const initConditions = async () => {
-        if (!item.Conditions) {
-            const res = await getLocationConditions(item.Key);
-            if (res?.[0]) {
-                dispatch({ type: UPDATE_SELECTED_LOCATION, location: { ...item, Conditions: res[0] } })
-            }
+    const initData = async () => {
+        if (!item.Conditions || !item.Forcast) {
+            let res = await Promise.all([initConditions(), initForcast()]);
+            dispatch({ type: UPDATE_SELECTED_LOCATION, location: { ...item, Conditions: res[0], Forcast: res[1] } })
         }
     }
 
-    const initForcast = async () => {
-        if (!forcast) {
-            const res = await getLocationForcast(item.Key);
-            if (res?.DailyForecasts) {
-                setForcast(res);
-            }
+    const initConditions = async () => {
+
+        const res = await getLocationConditions(item.Key);
+        if (res ?.[0]) {
+            return res[0];
         }
+        return null;
+    }
+
+    const initForcast = async () => {
+
+        const res = await getLocationForcast(item.Key);
+        if (res ?.DailyForecasts) {
+            return res;
+        }
+        return null;
     }
 
     const toggleFavoriteMode = () => {
         dispatch({ type: ACTION_TOGGLE_FAVORITES, location: item })
     }
 
-    console.log('forcast: ', forcast)
+
     return (
         <ResultsBox>
-            {!item.Conditions ? <Processing />
+            {!item.Conditions ?
+                <ProcessingContainer>
+                    <Processing />
+                </ProcessingContainer>
                 :
                 <Main>
                     <Header>
@@ -75,8 +82,8 @@ const SelectedLocation = ({ item }) => {
                     </LocationText>
 
                     <ForCast>
-                        {forcast?.DailyForecasts?.length > 0 ?
-                            forcast.DailyForecasts.map((day, dayIndex) =>
+                        {item.Forcast ?.DailyForecasts ?.length > 0 ?
+                            item.Forcast.DailyForecasts.map((day, dayIndex) =>
                                 <SingleForcast key={dayIndex}>
                                     <DayName>{getDayName(day.Date)}</DayName>
                                     <span>{getTempRangeString(day, isMetric)}</span>
@@ -99,6 +106,7 @@ const ResultsBox = styled.div`
 display: flex;
 margin-top: 5rem;
 width: 80rem;
+min-height: 29rem;
 border-radius: .5rem;
 border: .2rem solid ${p => p.theme.mainColor};
 `
@@ -184,4 +192,12 @@ const FavoriteContainer = styled.div`
 display: flex;
 align-items: center;
 height: 5rem;
+`
+
+const ProcessingContainer = styled.div`
+display: flex;
+justify-content: center;
+align-items: center;
+width: 100%;
+height: 29rem;
 `
