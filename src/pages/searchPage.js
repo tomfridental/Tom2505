@@ -1,33 +1,33 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import styled from 'styled-components';
 import Autocomplete from 'react-autocomplete';
 import LogoImg from '../static/logo.png';
 import { getAutocompleteOptions, getCurrentPosition, getLocationByLatLng } from '../fetchHelper';
 import SelectedLocation from './selectedLocation';
-import { useLocation } from 'react-router-dom';
+import { UPDATE_SELECTED_LOCATION } from '../state/reducers/configReducer';
+import { useSelector, useDispatch } from 'react-redux';
+import debounce from 'lodash.debounce'
 
 
 const SearchPage = () => {
 
-    let location = useLocation();
+    const dispatch = useDispatch();
+    const selectedLocation = useSelector(state => state.config.selectedLocation);
 
-    const hasPreSelectedLocation = location?.state?.location;
-
-    const [inputValue, setInputValue] = useState(hasPreSelectedLocation?.LocalizedName || '');
+    const [inputValue, setInputValue] = useState(selectedLocation?.LocalizedName || '');
     const [resultsList, setResultsList] = useState([]);
-    const [currentLocation, setCurrentLocation] = useState(hasPreSelectedLocation);
 
     useEffect(() => {
         initCurrentPoisition();
     }, [])
 
     const initCurrentPoisition = async () => {
-        if (!currentLocation) {
+        if (!selectedLocation) {
             const pos = await getCurrentPosition();
             if (pos) {
                 const location = await getLocationByLatLng(pos.coords);
                 if (location) {
-                    setCurrentLocation(location);
+                    updateSelectedLocation(location);
                     setInputValue(location.EnglishName)
                 }
             }
@@ -35,10 +35,12 @@ const SearchPage = () => {
 
     }
 
+    const delayedQuery = useCallback(debounce(val => fetchResults(val), 500), []);
+
     const handleValueChange = (val) => {
         setInputValue(val);
         if (val.length > 1) {
-            fetchResults(val)
+            delayedQuery(val);
         }
     }
 
@@ -48,9 +50,14 @@ const SearchPage = () => {
     }
 
     const handlePlaceSelected = (inputValue, item) => {
+        updateSelectedLocation(item);
         setInputValue(inputValue)
-        setCurrentLocation(item);
     }
+
+    const updateSelectedLocation = (updatedLocation) => {
+        dispatch({ type: UPDATE_SELECTED_LOCATION, location: updatedLocation })
+    }
+
 
 
     return (
@@ -64,23 +71,41 @@ const SearchPage = () => {
                         {item.LocalizedName}
                     </SingleOption>
                 }
+                wrapperProps={{
+                    style: {
+                        'position': 'relative'
+                    }
+                }}
+                menuStyle={menuStyle}
                 value={inputValue}
                 onChange={e => handleValueChange(e.target.value.replace(/[^A-Za-z\s:/]/g, ''))}
                 onSelect={handlePlaceSelected}
                 renderInput={props => <Input {...props} placeholder={'Search for new loaction'} />}
             />
 
-            {currentLocation &&
+            {selectedLocation &&
                 <SelectedLocation
-                    key={currentLocation.Key}
-                    item={currentLocation}
-                    setCurrentLocation={setCurrentLocation}
+                    key={selectedLocation.Key}
+                    item={selectedLocation}
                 />}
         </Wrapper>
     )
 }
 
 export default SearchPage;
+
+const menuStyle = {
+    borderRadius: '.5rem',
+    boxShadow: '0 2px 12px rgba(0, 0, 0, 0.1)',
+    background: 'rgba(255, 255, 255, 0.9)',
+    padding: '2px 0',
+    fontSize: '90%',
+    position: 'absolute',
+    overflow: 'auto',
+    maxHeight: '30rem',
+    top: '5rem',
+    left: 0
+}
 
 // CSS //
 const Wrapper = styled.div`

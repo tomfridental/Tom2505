@@ -16,6 +16,7 @@
     "@babel/preset-env": "^7.14.1",
     "@babel/preset-react": "^7.13.13",
     "babel-loader": "^8.2.2",
+    "lodash": "^4.17.21",
     "notyf": "^3.9.0",
     "polished": "^4.1.2",
     "react": "^17.0.2",

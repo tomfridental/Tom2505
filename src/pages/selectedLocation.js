@@ -2,9 +2,10 @@ import React, { useEffect, useState, useMemo } from 'react';
 import styled from 'styled-components';
 import { getLocationConditions, getLocationForcast } from '../fetchHelper';
 import Processing from './processing';
-import { darken, lighten } from 'polished';
+import { lighten } from 'polished';
 import { useSelector, useDispatch } from 'react-redux';
 import { ACTION_TOGGLE_FAVORITES } from '../state/reducers/favoritesReducer';
+import { UPDATE_SELECTED_LOCATION } from '../state/reducers/configReducer';
 import { METRIC_UNIT } from '../state/reducers/configReducer';
 import { getTemperatureString, getDayName, getTempRangeString } from '../helper';
 import BASIC_CITY_IMAGE from '../static/location_generic.jpg';
@@ -12,7 +13,7 @@ import IS_FAVORITE_IMG from '../static/favorite_yes.png';
 import IS_NOT_FAVORITE_IMG from '../static/favorite_no.png';
 
 
-const SelectedLocation = ({ item, setCurrentLocation }) => {
+const SelectedLocation = ({ item }) => {
 
     const [forcast, setForcast] = useState({})
 
@@ -28,16 +29,20 @@ const SelectedLocation = ({ item, setCurrentLocation }) => {
     }, [])
 
     const initConditions = async () => {
-        const res = await getLocationConditions(item.Key);
-        if (res?.[0]) {
-            setCurrentLocation({ ...item, Conditions: res[0] });
+        if (!item.Conditions) {
+            const res = await getLocationConditions(item.Key);
+            if (res?.[0]) {
+                dispatch({ type: UPDATE_SELECTED_LOCATION, location: { ...item, Conditions: res[0] } })
+            }
         }
     }
 
     const initForcast = async () => {
-        const res = await getLocationForcast(item.Key);
-        if (res?.DailyForecasts) {
-            setForcast(res);
+        if (!forcast) {
+            const res = await getLocationForcast(item.Key);
+            if (res?.DailyForecasts) {
+                setForcast(res);
+            }
         }
     }
 

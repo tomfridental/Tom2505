@@ -1,20 +1,20 @@
 import React from 'react';
 import styled from 'styled-components';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { getTemperatureString } from '../helper';
 import { useHistory } from 'react-router-dom';
 import { SEARCH_PAGE } from '../Consts';
-import { lighten} from 'polished';
+import { lighten } from 'polished';
+import { UPDATE_SELECTED_LOCATION } from '../state/reducers/configReducer';
 
 const FavoritesPage = () => {
 
     const history = useHistory();
+    const dispatch = useDispatch();
 
     const handleViewLocationClicked = (item) => {
-        history.push({
-            pathname: SEARCH_PAGE,
-            state: { location: item }
-        })
+        dispatch({ type: UPDATE_SELECTED_LOCATION, location: item })
+        history.push(SEARCH_PAGE)
     }
 
     const favoriteList = useSelector(state => state.favorites);

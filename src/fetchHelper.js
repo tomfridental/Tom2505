@@ -70,7 +70,6 @@ export const getAutocompleteOptions = async (value) => {
     const url = 'http://dataservice.accuweather.com/locations/v1/cities/autocomplete';
     const queryString = `apikey=${API_KEY}&q=${value}&language=en-us`;
     // const res = await fetchGet(url, queryString);
-    console.log('executed')
     const res = dummyRes;
 
     return res || [];
