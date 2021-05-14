@@ -2,7 +2,7 @@ import React from 'react';
 import styled, { ThemeProvider } from 'styled-components';
 import GlobalStyles from './css/globa.styles';
 import Themes from './css/themes';
-import TopBar from './components/topBar';
+import TopBar from './components/TopBar';
 import { HashRouter as Router, Route, Switch } from 'react-router-dom';
 import { SEARCH_PAGE, FAVORITES_PAGE } from './Consts';
 import SearchPage from './components/searchPage';
