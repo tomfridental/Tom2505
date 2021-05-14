@@ -1,23 +1,26 @@
 import React from 'react';
 import styled from 'styled-components';
+import { Link } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { getTemperatureString } from '../helper';
 import { useHistory } from 'react-router-dom';
 import { SEARCH_PAGE } from '../Consts';
 import { lighten } from 'polished';
-import { UPDATE_SELECTED_LOCATION } from '../state/reducers/configReducer';
+import { UPDATE_SELECTED_LOCATION, METRIC_UNIT } from '../state/reducers/configReducer';
 
 const FavoritesPage = () => {
 
     const history = useHistory();
     const dispatch = useDispatch();
 
+    const favoriteList = useSelector(state => state.favorites);
+    const tempUnit = useSelector(state => state.config.tempUnit);
+    const isMetric = tempUnit === METRIC_UNIT;
+
     const handleViewLocationClicked = (item) => {
         dispatch({ type: UPDATE_SELECTED_LOCATION, location: item })
         history.push(SEARCH_PAGE)
     }
-
-    const favoriteList = useSelector(state => state.favorites);
 
     return (
         <Wrapper>
@@ -27,7 +30,7 @@ const FavoritesPage = () => {
                         <VBox>
                             <LocationName>{item.LocalizedName}</LocationName>
                             <span>ID: {item.Key}</span>
-                            <span>{getTemperatureString(item.Conditions)}</span>
+                            <span>{getTemperatureString(item.Conditions, isMetric)}</span>
                         </VBox>
                         <span>{item.Conditions?.WeatherText}</span>
 
@@ -35,9 +38,9 @@ const FavoritesPage = () => {
                     </Conatiner>
                 )
                 :
-                <NoFavorites>No Favorite yet, go to "Search" page and add some.</NoFavorites>
+                <NoFavorites>No Favorite yet, go to <SearchLink to={SEARCH_PAGE}>Search</SearchLink> page and add some.</NoFavorites>
             }
-        </Wrapper>
+        </Wrapper >
     )
 }
 
@@ -67,6 +70,7 @@ margin-bottom: 3rem;
 color: #fff;
 font-size: 1.8rem;
 border-radius: .5rem;
+box-shadow: 0 0 1rem 0 rgba(51,51,51,0.51);
 animation: open 500ms;
 
 @keyframes open {
@@ -96,4 +100,12 @@ font-size: 1.6rem;
 background-color:  ${p => lighten(0.2, p.theme.mainColor)};
 border-radius: .5rem;
 color: #fff;
+
+&:hover{
+    background-color:  ${p => lighten(0.1, p.theme.mainColor)}; 
+}
+`
+
+const SearchLink = styled(Link)`
+
 `

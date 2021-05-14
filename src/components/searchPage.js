@@ -17,6 +17,8 @@ const SearchPage = () => {
     const [inputValue, setInputValue] = useState(selectedLocation?.LocalizedName || '');
     const [resultsList, setResultsList] = useState([]);
 
+    const delayedQuery = useCallback(debounce(val => fetchResults(val), 300), []);
+
     useEffect(() => {
         initCurrentPoisition();
     }, [])
@@ -28,14 +30,13 @@ const SearchPage = () => {
                 const location = await getLocationByLatLng(pos.coords);
                 if (location) {
                     updateSelectedLocation(location);
+                    setResultsList([location])
                     setInputValue(location.EnglishName)
                 }
             }
         }
 
     }
-
-    const delayedQuery = useCallback(debounce(val => fetchResults(val), 500), []);
 
     const handleValueChange = (val) => {
         setInputValue(val);
@@ -50,14 +51,15 @@ const SearchPage = () => {
     }
 
     const handlePlaceSelected = (inputValue, item) => {
-        updateSelectedLocation(item);
-        setInputValue(inputValue)
+        if (item.Key !== selectedLocation?.Key) {
+            updateSelectedLocation(item);
+        }
+        setInputValue(inputValue);
     }
 
     const updateSelectedLocation = (updatedLocation) => {
         dispatch({ type: UPDATE_SELECTED_LOCATION, location: updatedLocation })
     }
-
 
 
     return (
@@ -66,27 +68,25 @@ const SearchPage = () => {
             <Autocomplete
                 getItemValue={item => item.LocalizedName}
                 items={resultsList}
+                wrapperProps={{ style: { 'position': 'relative' } }}
+                value={inputValue}
+                onChange={e => handleValueChange(e.target.value.replace(/[^A-Za-z\s:/]/g, ''))}
+                onSelect={handlePlaceSelected}
+                renderInput={props => <Input {...props} placeholder={'Search for new loaction'} />}
+                renderMenu={(items, value, style) =>
+                    !value ? <div /> : items.length === 0 ? <div style={{ ...style, ...menuStyle }}><SingleOption>no results</SingleOption></div> : <div style={{ ...style, ...menuStyle }} children={items} />
+                }
                 renderItem={(item, isHighlighted) =>
                     <SingleOption key={item.Key} isHighlighted={isHighlighted}>
                         {item.LocalizedName}
                     </SingleOption>
                 }
-                wrapperProps={{
-                    style: {
-                        'position': 'relative'
-                    }
-                }}
-                menuStyle={menuStyle}
-                value={inputValue}
-                onChange={e => handleValueChange(e.target.value.replace(/[^A-Za-z\s:/]/g, ''))}
-                onSelect={handlePlaceSelected}
-                renderInput={props => <Input {...props} placeholder={'Search for new loaction'} />}
             />
 
             {selectedLocation &&
                 <SelectedLocation
                     key={selectedLocation.Key}
-                    item={selectedLocation}
+                    selectedLocation={selectedLocation}
                 />}
         </Wrapper>
     )
@@ -121,7 +121,8 @@ const Input = styled.input`
 width: 50rem;
 height: 4.8rem;
 background-color: transparent;
-border-bottom: .1rem solid black;
+border-bottom: .3rem solid ${p => p.theme.mainColor};
+font-size: 2rem;
 `
 
 const Logo = styled.img`
@@ -131,7 +132,8 @@ margin-bottom: -3rem;
 `
 
 const SingleOption = styled.div`
-padding: .5rem 0;
+padding: .8rem .5rem;
+font-size: 1.6rem;
 cursor: pointer;
 background-color: ${p => p.isHighlighted ? 'lightgray' : '#fff'};
 `
