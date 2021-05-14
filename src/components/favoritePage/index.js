@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
-import { SEARCH_PAGE } from '../../consts';
+import { SEARCH_PAGE } from '../../Consts';
 import { UPDATE_SELECTED_LOCATION, METRIC_UNIT } from '../../state/reducers/configReducer';
 import FavoriteItem from './favoriteItem';
 
