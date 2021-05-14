@@ -2,11 +2,11 @@ import React from 'react';
 import styled, { ThemeProvider } from 'styled-components';
 import GlobalStyles from './css/globa.styles';
 import Themes from './css/themes';
-import TopBar from './TopBar';
+import TopBar from './components/topBar';
 import { HashRouter as Router, Route, Switch } from 'react-router-dom';
 import { SEARCH_PAGE, FAVORITES_PAGE } from './Consts';
-import SearchPage from './pages/searchPage';
-import FavoritesPage from './pages/favoritesPage';
+import SearchPage from './components/searchPage';
+import FavoritesPage from './components/favoritesPage';
 import { useSelector } from 'react-redux';
 
 const App = () => {

@@ -1,16 +1,18 @@
 import React, { useEffect, useMemo } from 'react';
 import styled from 'styled-components';
-import { getLocationConditions, getLocationForcast } from '../fetchHelper';
-import Processing from './processing';
+import { getLocationConditions, getLocationForcast, displayNotyf } from '../fetchHelper';
+import Processing from '../utils/processing';
 import { lighten } from 'polished';
 import { useSelector, useDispatch } from 'react-redux';
 import { ACTION_TOGGLE_FAVORITES } from '../state/reducers/favoritesReducer';
 import { UPDATE_SELECTED_LOCATION } from '../state/reducers/configReducer';
 import { METRIC_UNIT } from '../state/reducers/configReducer';
 import { getTemperatureString, getDayName, getTempRangeString } from '../helper';
-import BASIC_CITY_IMAGE from '../static/location_generic.jpg';
 import IS_FAVORITE_IMG from '../static/favorite_yes.png';
 import IS_NOT_FAVORITE_IMG from '../static/favorite_no.png';
+import WEATHER_IMG_RAINY from '../static/rainy.png'
+import WEATHER_IMG_CLOUDY from '../static/cloudy.png'
+import WEATHER_IMG_SUNNY from '../static/sunny.png'
 
 
 const SelectedLocation = ({ item }) => {
@@ -51,9 +53,22 @@ const SelectedLocation = ({ item }) => {
     }
 
     const toggleFavoriteMode = () => {
+        const notyfMsg = isFavorite ? 'Removed from favorites' : 'Added to favorites'
         dispatch({ type: ACTION_TOGGLE_FAVORITES, location: item })
+        displayNotyf(notyfMsg, { type: 'success' })
     }
 
+    const loadWeahterImg = () => {
+        const temperature = item ?.Conditions ?.Temperature ?.Metric ?.Value;
+
+        if (temperature > 16) {
+            return WEATHER_IMG_SUNNY;
+        }
+        else if (temperature > 6) {
+            return WEATHER_IMG_CLOUDY;
+        }
+        return WEATHER_IMG_RAINY;
+    }
 
     return (
         <ResultsBox>
@@ -65,14 +80,14 @@ const SelectedLocation = ({ item }) => {
                 <Main>
                     <Header>
                         <Location>
-                            <Image src={BASIC_CITY_IMAGE} />
+                            <Image src={loadWeahterImg()} />
                             <VBox>
                                 <LocationName>{item.LocalizedName}</LocationName>
                                 <div>{getTemperatureString(item.Conditions, isMetric)}</div>
                             </VBox>
                         </Location>
 
-                        <FavoriteContainer>
+                        <FavoriteContainer key={isFavorite}>
                             <FavoriteImg title={isFavorite ? 'Remove from Favorites' : 'Add To Favorites'} onClick={toggleFavoriteMode} src={isFavorite ? IS_FAVORITE_IMG : IS_NOT_FAVORITE_IMG} />
                         </FavoriteContainer>
                     </Header>
@@ -106,7 +121,7 @@ const ResultsBox = styled.div`
 display: flex;
 margin-top: 5rem;
 width: 80rem;
-min-height: 29rem;
+min-height: 30rem;
 border-radius: .5rem;
 border: .2rem solid ${p => p.theme.mainColor};
 `
@@ -133,6 +148,7 @@ justify-content: space-between;
 const Location = styled.div`
 display: flex;
 max-width: 50%;
+align-items: center;
 `
 
 const LocationName = styled.span`
@@ -151,7 +167,7 @@ font-weight: 600;
 const ForCast = styled.div`
 margin-top: 3rem;
 width: 100%;
-height: 10rem;
+height: 11rem;
 display: flex;
 justify-content: space-between;
 `
@@ -178,7 +194,8 @@ font-size: 1.8rem;
 `
 
 const Image = styled.img`
-
+width: 7rem;
+height: 6rem;
 `
 
 const FavoriteImg = styled.img`
@@ -186,6 +203,14 @@ width: 5rem;
 height: 5rem;
 margin-inline-start: 2rem;
 cursor: pointer;
+animation: open 1000ms;
+
+@keyframes open {
+    from { opacity: 0}
+    to {opacity: 1}
+}
+
+&:
 `
 
 const FavoriteContainer = styled.div`
@@ -199,5 +224,5 @@ display: flex;
 justify-content: center;
 align-items: center;
 width: 100%;
-height: 29rem;
+height: 30rem;
 `

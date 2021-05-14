@@ -14,8 +14,10 @@ const SearchPage = () => {
     const dispatch = useDispatch();
     const selectedLocation = useSelector(state => state.config.selectedLocation);
 
-    const [inputValue, setInputValue] = useState(selectedLocation?.LocalizedName || '');
+    const [inputValue, setInputValue] = useState(selectedLocation ?.LocalizedName || '');
     const [resultsList, setResultsList] = useState([]);
+
+    const delayedQuery = useCallback(debounce(val => fetchResults(val), 300), []);
 
     useEffect(() => {
         initCurrentPoisition();
@@ -35,8 +37,6 @@ const SearchPage = () => {
 
     }
 
-    const delayedQuery = useCallback(debounce(val => fetchResults(val), 500), []);
-
     const handleValueChange = (val) => {
         setInputValue(val);
         if (val.length > 1) {
@@ -50,14 +50,15 @@ const SearchPage = () => {
     }
 
     const handlePlaceSelected = (inputValue, item) => {
-        updateSelectedLocation(item);
-        setInputValue(inputValue)
+        if (item.Key !== selectedLocation ?.Key) {
+            updateSelectedLocation(item);
+        }
+        setInputValue(inputValue);
     }
 
     const updateSelectedLocation = (updatedLocation) => {
         dispatch({ type: UPDATE_SELECTED_LOCATION, location: updatedLocation })
     }
-
 
 
     return (
@@ -81,6 +82,9 @@ const SearchPage = () => {
                 onChange={e => handleValueChange(e.target.value.replace(/[^A-Za-z\s:/]/g, ''))}
                 onSelect={handlePlaceSelected}
                 renderInput={props => <Input {...props} placeholder={'Search for new loaction'} />}
+                renderMenu={(items, value, style) =>
+                    (value && items.length === 0) ? <div style={{ ...style, ...menuStyle }}>no results </div> : <div style={{ ...style, ...menuStyle }} children={items} />
+                }
             />
 
             {selectedLocation &&
@@ -121,7 +125,7 @@ const Input = styled.input`
 width: 50rem;
 height: 4.8rem;
 background-color: transparent;
-border-bottom: .1rem solid black;
+border-bottom: .3rem solid ${p => p.theme.mainColor};
 `
 
 const Logo = styled.img`

@@ -12,14 +12,14 @@ const FavoritesPage = () => {
     const history = useHistory();
     const dispatch = useDispatch();
 
+    const favoriteList = useSelector(state => state.favorites);
+    const tempUnit = useSelector(state => state.config.tempUnit);
+    const isMetric = tempUnit === METRIC_UNIT;
+
     const handleViewLocationClicked = (item) => {
         dispatch({ type: UPDATE_SELECTED_LOCATION, location: item })
         history.push(SEARCH_PAGE)
     }
-
-    const favoriteList = useSelector(state => state.favorites);
-    const tempUnit = useSelector(state => state.config.tempUnit);
-    const isMetric = tempUnit === METRIC_UNIT;
 
     return (
         <Wrapper>
