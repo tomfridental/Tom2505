@@ -36,7 +36,7 @@ export const displayNotyf = (msg, props = {}) => {
 }
 
 export const getLocationForcast = async (locationKey) => {
-    await new Promise(resolve => setTimeout(resolve, 1000));
+
     const url = `dataservice.accuweather.com/forecasts/v1/daily/5day/${locationKey}`;
     const queryString = `apikey=${API_KEY}&details=false&language=en-us&metric=true`;
     const res = await fetchGet(url, queryString);
