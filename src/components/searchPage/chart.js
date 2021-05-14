@@ -1,26 +1,20 @@
 import React, { useEffect, useMemo } from 'react';
 import styled from 'styled-components';
-import { getLocationConditions, getLocationForcast, displayNotyf } from '../fetchHelper';
-import Processing from '../utils/processing';
+import { getLocationConditions, getLocationForcast, displayNotyf } from '../../fetchHelper';
+import Processing from '../../utils/processing';
 import { lighten } from 'polished';
-import { useSelector, useDispatch } from 'react-redux';
-import { ACTION_TOGGLE_FAVORITES } from '../state/reducers/favoritesReducer';
-import { UPDATE_SELECTED_LOCATION } from '../state/reducers/configReducer';
-import { METRIC_UNIT } from '../state/reducers/configReducer';
-import { getTemperatureString, getDayName, getTempRangeString } from '../helper';
-import IS_FAVORITE_IMG from '../static/favorite_yes.png';
-import IS_NOT_FAVORITE_IMG from '../static/favorite_no.png';
-import WEATHER_IMG_RAINY from '../static/rainy.png'
-import WEATHER_IMG_CLOUDY from '../static/cloudy.png'
-import WEATHER_IMG_SUNNY from '../static/sunny.png'
+import { METRIC_UNIT } from '../../state/reducers/configReducer';
+import { getTemperatureString, getDayName, getTempRangeString } from '../../helper';
+import IS_FAVORITE_IMG from '../../static/favorite_yes.png';
+import IS_NOT_FAVORITE_IMG from '../../static/favorite_no.png';
+import WEATHER_IMG_RAINY from '../../static/rainy.png'
+import WEATHER_IMG_CLOUDY from '../../static/cloudy.png'
+import WEATHER_IMG_SUNNY from '../../static/sunny.png'
 
 
-const SelectedLocation = ({ selectedLocation }) => {
+const Chart = ({ selectedLocation, tempUnit, favorites, updateSelectedLocation, toggleFavoriteMode }) => {
 
-    const dispatch = useDispatch();
-    const favoriteList = useSelector(state => state.favorites);
-    const tempUnit = useSelector(state => state.config.tempUnit);
-    const isFavorite = useMemo(() => favoriteList.find(el => el.Key === selectedLocation.Key) ? true : false, [favoriteList])
+    const isFavorite = useMemo(() => favorites.find(el => el.Key === selectedLocation.Key) ? true : false, [favorites])
     const isMetric = tempUnit === METRIC_UNIT;
 
     useEffect(() => {
@@ -30,7 +24,8 @@ const SelectedLocation = ({ selectedLocation }) => {
     const initData = async () => {
         if (!selectedLocation.Conditions || !selectedLocation.Forcast) {
             let res = await Promise.all([initConditions(), initForcast()]);
-            dispatch({ type: UPDATE_SELECTED_LOCATION, location: { ...selectedLocation, Conditions: res[0], Forcast: res[1] } })
+            console.log('res: ', res)
+            updateSelectedLocation({ ...selectedLocation, Conditions: res[0], Forcast: res[1] });
         }
     }
 
@@ -52,9 +47,9 @@ const SelectedLocation = ({ selectedLocation }) => {
         return null;
     }
 
-    const toggleFavoriteMode = () => {
+    const handleFavoritesClicked = () => {
         const notyfMsg = isFavorite ? 'Removed from favorites' : 'Added to favorites'
-        dispatch({ type: ACTION_TOGGLE_FAVORITES, location: selectedLocation })
+        toggleFavoriteMode(selectedLocation);
         displayNotyf(notyfMsg, { type: 'success' })
     }
 
@@ -88,7 +83,7 @@ const SelectedLocation = ({ selectedLocation }) => {
                         </Location>
 
                         <FavoriteContainer key={isFavorite}>
-                            <FavoriteImg title={isFavorite ? 'Remove from Favorites' : 'Add To Favorites'} onClick={toggleFavoriteMode} src={isFavorite ? IS_FAVORITE_IMG : IS_NOT_FAVORITE_IMG} />
+                            <FavoriteImg title={isFavorite ? 'Remove from Favorites' : 'Add To Favorites'} onClick={handleFavoritesClicked} src={isFavorite ? IS_FAVORITE_IMG : IS_NOT_FAVORITE_IMG} />
                         </FavoriteContainer>
                     </Header>
 
@@ -114,7 +109,7 @@ const SelectedLocation = ({ selectedLocation }) => {
     )
 }
 
-export default SelectedLocation;
+export default Chart;
 
 // CSS //
 const ResultsBox = styled.div`
@@ -210,8 +205,6 @@ animation: open 1000ms;
     from { opacity: 0}
     to {opacity: 1}
 }
-
-&:
 `
 
 const FavoriteContainer = styled.div`

@@ -1,6 +1,6 @@
 import { Notyf } from 'notyf';
 import 'notyf/notyf.min.css';
-import { API_KEY } from './Consts';
+import { API_KEY } from './consts';
 import { convertMetricToImperial } from './helper';
 
 export const fetchGet = async (url, queryString) => {

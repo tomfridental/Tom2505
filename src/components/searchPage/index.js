@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import styled from 'styled-components';
-import Autocomplete from 'react-autocomplete';
-import LogoImg from '../static/logo.png';
-import { getAutocompleteOptions, getCurrentPosition, getLocationByLatLng } from '../fetchHelper';
-import SelectedLocation from './selectedLocation';
-import { UPDATE_SELECTED_LOCATION } from '../state/reducers/configReducer';
+import Autocomplete from './autocomplete';
+import LogoImg from '../../static/logo.png';
+import { getAutocompleteOptions, getCurrentPosition, getLocationByLatLng } from '../../fetchHelper';
+import SelectedLocation from './chart';
+import { UPDATE_SELECTED_LOCATION } from '../../state/reducers/configReducer';
+import { ACTION_TOGGLE_FAVORITES } from '../../state/reducers/favoritesReducer';
 import { useSelector, useDispatch } from 'react-redux';
 import debounce from 'lodash.debounce'
 
@@ -12,7 +13,8 @@ import debounce from 'lodash.debounce'
 const SearchPage = () => {
 
     const dispatch = useDispatch();
-    const selectedLocation = useSelector(state => state.config.selectedLocation);
+    const { config, favorites } = useSelector(state => state);
+    const { selectedLocation, tempUnit } = config
 
     const [inputValue, setInputValue] = useState(selectedLocation?.LocalizedName || '');
     const [resultsList, setResultsList] = useState([]);
@@ -61,51 +63,35 @@ const SearchPage = () => {
         dispatch({ type: UPDATE_SELECTED_LOCATION, location: updatedLocation })
     }
 
+    const toggleFavoriteMode = (item) => {
+        dispatch({ type: ACTION_TOGGLE_FAVORITES, location: item })
+    }
+
 
     return (
         <Wrapper>
             <Logo src={LogoImg} />
             <Autocomplete
-                getItemValue={item => item.LocalizedName}
-                items={resultsList}
-                wrapperProps={{ style: { 'position': 'relative' } }}
-                value={inputValue}
-                onChange={e => handleValueChange(e.target.value.replace(/[^A-Za-z\s:/]/g, ''))}
-                onSelect={handlePlaceSelected}
-                renderInput={props => <Input {...props} placeholder={'Search for new loaction'} />}
-                renderMenu={(items, value, style) =>
-                    !value ? <div /> : items.length === 0 ? <div style={{ ...style, ...menuStyle }}><SingleOption>no results</SingleOption></div> : <div style={{ ...style, ...menuStyle }} children={items} />
-                }
-                renderItem={(item, isHighlighted) =>
-                    <SingleOption key={item.Key} isHighlighted={isHighlighted}>
-                        {item.LocalizedName}
-                    </SingleOption>
-                }
+                inputValue={inputValue}
+                resultsList={resultsList}
+                handlePlaceSelected={handlePlaceSelected}
+                handleValueChange={handleValueChange}
             />
 
             {selectedLocation &&
                 <SelectedLocation
                     key={selectedLocation.Key}
                     selectedLocation={selectedLocation}
+                    tempUnit={tempUnit}
+                    favorites={favorites}
+                    updateSelectedLocation={updateSelectedLocation}
+                    toggleFavoriteMode={toggleFavoriteMode}
                 />}
         </Wrapper>
     )
 }
 
 export default SearchPage;
-
-const menuStyle = {
-    borderRadius: '.5rem',
-    boxShadow: '0 2px 12px rgba(0, 0, 0, 0.1)',
-    background: 'rgba(255, 255, 255, 0.9)',
-    padding: '2px 0',
-    fontSize: '90%',
-    position: 'absolute',
-    overflow: 'auto',
-    maxHeight: '30rem',
-    top: '5rem',
-    left: 0
-}
 
 // CSS //
 const Wrapper = styled.div`
@@ -117,23 +103,8 @@ align-items: center;
 padding-bottom: 5rem;
 `
 
-const Input = styled.input`
-width: 50rem;
-height: 4.8rem;
-background-color: transparent;
-border-bottom: .3rem solid ${p => p.theme.mainColor};
-font-size: 2rem;
-`
-
 const Logo = styled.img`
 width: 35rem;
 height: 30rem;
 margin-bottom: -3rem;
-`
-
-const SingleOption = styled.div`
-padding: .8rem .5rem;
-font-size: 1.6rem;
-cursor: pointer;
-background-color: ${p => p.isHighlighted ? 'lightgray' : '#fff'};
 `

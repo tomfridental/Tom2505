@@ -1,4 +1,4 @@
-import { DAYS_ARR } from './Consts';
+import { DAYS_ARR } from './consts';
 
 export const getTemperatureString = (conditionObj, isMetric) => {
     if (conditionObj?.Temperature) {

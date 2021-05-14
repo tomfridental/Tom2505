@@ -4,9 +4,9 @@ import GlobalStyles from './css/globa.styles';
 import Themes from './css/themes';
 import TopBar from './components/topBar';
 import { HashRouter as Router, Route, Switch } from 'react-router-dom';
-import { SEARCH_PAGE, FAVORITES_PAGE } from './Consts';
+import { SEARCH_PAGE, FAVORITES_PAGE } from './consts';
 import SearchPage from './components/searchPage';
-import FavoritesPage from './components/favoritesPage';
+import FavoritesPage from './components/favoritePage';
 import { useSelector } from 'react-redux';
 
 const App = () => {
