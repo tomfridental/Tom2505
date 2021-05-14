@@ -8,10 +8,12 @@ import { ACTION_TOGGLE_FAVORITES } from '../state/reducers/favoritesReducer';
 import { METRIC_UNIT } from '../state/reducers/configReducer';
 import { getTemperatureString, getDayName, getTempRangeString } from '../helper';
 import BASIC_CITY_IMAGE from '../static/location_generic.jpg';
+import IS_FAVORITE_IMG from '../static/favorite_yes.png';
+import IS_NOT_FAVORITE_IMG from '../static/favorite_no.png';
 
-const SelectedLocation = ({ item }) => {
 
-    const [conditions, setConditions] = useState({})
+const SelectedLocation = ({ item, setCurrentLocation }) => {
+
     const [forcast, setForcast] = useState({})
 
     const dispatch = useDispatch();
@@ -19,7 +21,7 @@ const SelectedLocation = ({ item }) => {
     const tempUnit = useSelector(state => state.config.tempUnit);
     const isFavorite = useMemo(() => favoriteList.find(el => el.Key === item.Key) ? true : false, [favoriteList])
     const isMetric = tempUnit === METRIC_UNIT;
-    
+
     useEffect(() => {
         initConditions();
         initForcast();
@@ -28,7 +30,7 @@ const SelectedLocation = ({ item }) => {
     const initConditions = async () => {
         const res = await getLocationConditions(item.Key);
         if (res?.[0]) {
-            setConditions(res[0]);
+            setCurrentLocation({ ...item, Conditions: res[0] });
         }
     }
 
@@ -40,13 +42,13 @@ const SelectedLocation = ({ item }) => {
     }
 
     const toggleFavoriteMode = () => {
-        dispatch({ type: ACTION_TOGGLE_FAVORITES, location: { ...item, Conditions: conditions } })
+        dispatch({ type: ACTION_TOGGLE_FAVORITES, location: item })
     }
 
-    console.log('forcast: ', forcast)
+
     return (
         <ResultsBox>
-            {!conditions ? <Processing />
+            {!item.Conditions ? <Processing />
                 :
                 <Main>
                     <Header>
@@ -54,18 +56,17 @@ const SelectedLocation = ({ item }) => {
                             <Image src={BASIC_CITY_IMAGE} />
                             <VBox>
                                 <LocationName>{item.LocalizedName}</LocationName>
-                                <div>{getTemperatureString(conditions, isMetric)}</div>
+                                <div>{getTemperatureString(item.Conditions, isMetric)}</div>
                             </VBox>
                         </Location>
 
-                        <AddToFavorites onClick={toggleFavoriteMode}>
-                            {isFavorite ? 'Remove from Favorites' : 'Add To Favorites'}
-                        </AddToFavorites>
-
+                        <FavoriteContainer>
+                            <FavoriteImg title={isFavorite ? 'Remove from Favorites' : 'Add To Favorites'} onClick={toggleFavoriteMode} src={isFavorite ? IS_FAVORITE_IMG : IS_NOT_FAVORITE_IMG} />
+                        </FavoriteContainer>
                     </Header>
 
                     <LocationText>
-                        {conditions?.WeatherText}
+                        {item.Conditions.WeatherText}
                     </LocationText>
 
                     <ForCast>
@@ -73,7 +74,7 @@ const SelectedLocation = ({ item }) => {
                             forcast.DailyForecasts.map((day, dayIndex) =>
                                 <SingleForcast key={dayIndex}>
                                     <DayName>{getDayName(day.Date)}</DayName>
-                                    <span>{getTempRangeString(day)}</span>
+                                    <span>{getTempRangeString(day, isMetric)}</span>
                                 </SingleForcast>
                             )
                             :
@@ -150,27 +151,32 @@ border-radius: .5rem;
 align-items: center;
 justify-content: space-evenly;
 font-weight: 600;
-/* color: #fff; */
 background-color:  ${p => lighten(0.2, p.theme.mainColor)};
+animation: open 500ms;
+
+@keyframes open {
+    from { opacity: 0}
+    to {opacity: 1}
+}
 `
 
 const DayName = styled.span`
 font-size: 1.8rem;
 `
 
-const AddToFavorites = styled.button`
-padding: 0.4rem 1.2rem;
-width: auto;
-height: auto;
-border-radius: .5rem;
-background-color: ${p => p.theme.mainColor};
-color: #fff;
-
-&:hover{
-    background-color:  ${p => darken(0.1, p.theme.mainColor)};
-}
-`
-
 const Image = styled.img`
 
+`
+
+const FavoriteImg = styled.img`
+width: 5rem;
+height: 5rem;
+margin-inline-start: 2rem;
+cursor: pointer;
+`
+
+const FavoriteContainer = styled.div`
+display: flex;
+align-items: center;
+height: 5rem;
 `

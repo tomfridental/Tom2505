@@ -1,17 +1,12 @@
 import { Notyf } from 'notyf';
 import 'notyf/notyf.min.css';
 import { API_KEY } from './Consts';
+import { convertMetricToImperial } from './helper';
 
 export const fetchGet = async (url, queryString) => {
 
     try {
-        let res = await fetch(`${url}?${queryString}`, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                "Access-Control-Allow-Origin": "*"
-            }
-        })
+        let res = await fetch(`${url}?${queryString}`, { method: 'GET' })
         if (res) {
             res = await res.json();
         }
@@ -46,6 +41,14 @@ export const getLocationForcast = async (locationKey) => {
     const queryString = `apikey=${API_KEY}&details=false&language=en-us&metric=true`;
     // const res = await fetchGet(url, queryString);
     const res = dummy3;
+    if (res?.DailyForecasts?.length > 0) {
+        for (const day of res.DailyForecasts) {
+            day.ImperialTemp = {
+                Maximum: convertMetricToImperial(day.Temperature.Maximum),
+                Minimum: convertMetricToImperial(day.Temperature.Minimum)
+            }
+        }
+    }
 
     return res;
 }
@@ -67,6 +70,7 @@ export const getAutocompleteOptions = async (value) => {
     const url = 'http://dataservice.accuweather.com/locations/v1/cities/autocomplete';
     const queryString = `apikey=${API_KEY}&q=${value}&language=en-us`;
     // const res = await fetchGet(url, queryString);
+    console.log('executed')
     const res = dummyRes;
 
     return res || [];
@@ -86,7 +90,7 @@ export const getLocationByLatLng = async (pos) => {
     const queryString = `apikey=${API_KEY}&q=${pos.latitude},${pos.longitude}&language=en-us&toplevel=true`;
     //  const res = await fetchGet(url, queryString);
     const res = dummyloc;
-     return res;
+    return res;
 }
 
-const dummyloc = {"Version":1,"Key":"215854","Type":"City","Rank":31,"LocalizedName":"Tel Aviv","EnglishName":"Tel Aviv","PrimaryPostalCode":"","Region":{"ID":"MEA","LocalizedName":"Middle East","EnglishName":"Middle East"},"Country":{"ID":"IL","LocalizedName":"Israel","EnglishName":"Israel"},"AdministrativeArea":{"ID":"TA","LocalizedName":"Tel Aviv","EnglishName":"Tel Aviv","Level":1,"LocalizedType":"District","EnglishType":"District","CountryID":"IL"},"TimeZone":{"Code":"IDT","Name":"Asia/Jerusalem","GmtOffset":3.0,"IsDaylightSaving":true,"NextOffsetChange":"2021-10-30T23:00:00Z"},"GeoPosition":{"Latitude":32.045,"Longitude":34.77,"Elevation":{"Metric":{"Value":34.0,"Unit":"m","UnitType":5},"Imperial":{"Value":111.0,"Unit":"ft","UnitType":0}}},"IsAlias":false,"SupplementalAdminAreas":[],"DataSets":["AirQualityCurrentConditions","AirQualityForecasts","Alerts","ForecastConfidence"]}
+const dummyloc = { "Version": 1, "Key": "215854", "Type": "City", "Rank": 31, "LocalizedName": "Tel Aviv", "EnglishName": "Tel Aviv", "PrimaryPostalCode": "", "Region": { "ID": "MEA", "LocalizedName": "Middle East", "EnglishName": "Middle East" }, "Country": { "ID": "IL", "LocalizedName": "Israel", "EnglishName": "Israel" }, "AdministrativeArea": { "ID": "TA", "LocalizedName": "Tel Aviv", "EnglishName": "Tel Aviv", "Level": 1, "LocalizedType": "District", "EnglishType": "District", "CountryID": "IL" }, "TimeZone": { "Code": "IDT", "Name": "Asia/Jerusalem", "GmtOffset": 3.0, "IsDaylightSaving": true, "NextOffsetChange": "2021-10-30T23:00:00Z" }, "GeoPosition": { "Latitude": 32.045, "Longitude": 34.77, "Elevation": { "Metric": { "Value": 34.0, "Unit": "m", "UnitType": 5 }, "Imperial": { "Value": 111.0, "Unit": "ft", "UnitType": 0 } } }, "IsAlias": false, "SupplementalAdminAreas": [], "DataSets": ["AirQualityCurrentConditions", "AirQualityForecasts", "Alerts", "ForecastConfidence"] }

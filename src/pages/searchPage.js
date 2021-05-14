@@ -70,7 +70,12 @@ const SearchPage = () => {
                 renderInput={props => <Input {...props} placeholder={'Search for new loaction'} />}
             />
 
-            {currentLocation && <SelectedLocation key={currentLocation.Key} item={currentLocation} />}
+            {currentLocation &&
+                <SelectedLocation
+                    key={currentLocation.Key}
+                    item={currentLocation}
+                    setCurrentLocation={setCurrentLocation}
+                />}
         </Wrapper>
     )
 }

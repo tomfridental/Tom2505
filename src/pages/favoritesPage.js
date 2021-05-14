@@ -4,6 +4,7 @@ import { useSelector } from 'react-redux';
 import { getTemperatureString } from '../helper';
 import { useHistory } from 'react-router-dom';
 import { SEARCH_PAGE } from '../Consts';
+import { lighten} from 'polished';
 
 const FavoritesPage = () => {
 
@@ -66,6 +67,12 @@ margin-bottom: 3rem;
 color: #fff;
 font-size: 1.8rem;
 border-radius: .5rem;
+animation: open 500ms;
+
+@keyframes open {
+    from { opacity: 0}
+    to {opacity: 1}
+}
 `
 
 const VBox = styled.div`
@@ -84,8 +91,9 @@ font-size: 3rem;
 `
 
 const Button = styled.button`
-padding: 0.6rem 1.5rem;
+padding: 1rem 1.5rem;
 font-size: 1.6rem;
-background-color: red;
+background-color:  ${p => lighten(0.2, p.theme.mainColor)};
 border-radius: .5rem;
+color: #fff;
 `
