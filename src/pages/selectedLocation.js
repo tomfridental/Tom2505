@@ -15,7 +15,7 @@ import IS_NOT_FAVORITE_IMG from '../static/favorite_no.png';
 
 const SelectedLocation = ({ item }) => {
 
-    const [forcast, setForcast] = useState({})
+    const [forcast, setForcast] = useState(null)
 
     const dispatch = useDispatch();
     const favoriteList = useSelector(state => state.favorites);
@@ -50,7 +50,7 @@ const SelectedLocation = ({ item }) => {
         dispatch({ type: ACTION_TOGGLE_FAVORITES, location: item })
     }
 
-
+    console.log('forcast: ', forcast)
     return (
         <ResultsBox>
             {!item.Conditions ? <Processing />
