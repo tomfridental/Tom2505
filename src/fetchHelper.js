@@ -6,7 +6,7 @@ import { convertMetricToImperial } from './helper';
 export const fetchGet = async (url, queryString) => {
 
     try {
-        let res = await fetch(`${url}?${queryString}`, { method: 'GET' })
+        let res = await fetch(`${window.location.protocol}//${url}?${queryString}`, { method: 'GET' })
         if (res) {
             res = await res.json();
         }
@@ -37,7 +37,7 @@ export const displayNotyf = (msg, props = {}) => {
 
 export const getLocationForcast = async (locationKey) => {
     await new Promise(resolve => setTimeout(resolve, 1000));
-    const url = `http://dataservice.accuweather.com/forecasts/v1/daily/5day/${locationKey}`;
+    const url = `dataservice.accuweather.com/forecasts/v1/daily/5day/${locationKey}`;
     const queryString = `apikey=${API_KEY}&details=false&language=en-us&metric=true`;
     const res = await fetchGet(url, queryString);
 
@@ -54,7 +54,7 @@ export const getLocationForcast = async (locationKey) => {
 }
 
 export const getLocationConditions = async (locationKey) => {
-    const url = `http://dataservice.accuweather.com/currentconditions/v1/${locationKey}`;
+    const url = `dataservice.accuweather.com/currentconditions/v1/${locationKey}`;
     const queryString = `apikey=${API_KEY}&details=false&language=en-us`;
     const res = await fetchGet(url, queryString);
 
@@ -62,7 +62,7 @@ export const getLocationConditions = async (locationKey) => {
 }
 
 export const getAutocompleteOptions = async (value) => {
-    const url = 'http://dataservice.accuweather.com/locations/v1/cities/autocomplete';
+    const url = 'dataservice.accuweather.com/locations/v1/cities/autocomplete';
     const queryString = `apikey=${API_KEY}&q=${value}&language=en-us`;
     const res = await fetchGet(url, queryString);
 
@@ -76,7 +76,7 @@ export const getCurrentPosition = () => {
 }
 
 export const getLocationByLatLng = async (pos) => {
-    const url = 'http://dataservice.accuweather.com/locations/v1/cities/geoposition/search';
+    const url = 'dataservice.accuweather.com/locations/v1/cities/geoposition/search';
     const queryString = `apikey=${API_KEY}&q=${pos.latitude},${pos.longitude}&language=en-us&toplevel=true`;
     const res = await fetchGet(url, queryString);
 
