@@ -1,34 +1,32 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
-import { SEARCH_PAGE, FAVORITES_PAGE } from '../Consts';
+import { ADD_USERS_PAGE, VIEW_USERS_PAGE } from '../Consts';
 import { darken } from 'polished';
-import { useDispatch, useSelector } from 'react-redux';
-import { ACTION_SWITCH_THEME, ACTION_SWITCH_TEMP_UNIT, METRIC_UNIT } from '../state/reducers/configReducer';
+// import { useDispatch, useSelector } from 'react-redux';
+// import { ACTION_SWITCH_THEME, ACTION_SWITCH_TEMP_UNIT, METRIC_UNIT } from '../state/reducers/configReducer';
 
 const TopBar = () => {
 
-    const dispatch = useDispatch();
-    const tempUnit = useSelector(state => state.config.tempUnit);
-    const isMetricUnit = tempUnit === METRIC_UNIT;
+    // const dispatch = useDispatch();
+    // const tempUnit = useSelector(state => state.config.tempUnit);
+    // const isMetricUnit = tempUnit === METRIC_UNIT;
 
     return (
         <Wrapper>
             <NavigationBar>
-                <Navigation onClick={() => dispatch({ type: ACTION_SWITCH_THEME })}>Change Theme</Navigation>
-                <Navigation onClick={() => dispatch({ type: ACTION_SWITCH_TEMP_UNIT })}>Change to {isMetricUnit ? 'Fahrenheit' : 'Celsius'}</Navigation>
+                {/* <Navigation onClick={() => dispatch({ type: ACTION_SWITCH_THEME })}>Change Theme</Navigation> */}
             </NavigationBar>
 
             <NavigationBar>
-                <Navigation to={SEARCH_PAGE}>Search</Navigation>
-                <Navigation to={FAVORITES_PAGE}>Favorites</Navigation>
+                <Navigation to={ADD_USERS_PAGE}>Create User</Navigation>
+                <Navigation to={VIEW_USERS_PAGE}>View Users</Navigation>
             </NavigationBar>
         </Wrapper>
     )
 }
 
 export default TopBar;
-// export default connect(state => state)(TopBar)
 
 // CSS //
 const Wrapper = styled.div`

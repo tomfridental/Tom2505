@@ -1,12 +1,13 @@
 {
-  "name": "weather",
+  "name": "home_project",
   "version": "1.0.0",
-  "description": "simple weather app by tom fridental",
+  "description": "simple app by tom fridental",
   "main": "index.js",
   "scripts": {
-    "start": "webpack --mode development",
     "dev": "webpack serve --mode development --open",
-    "build": "webpack --mode production"
+    "build": "webpack --mode production",
+    "start": "node index.js",
+    "dev:server": "nodemon index.js"
   },
   "keywords": [],
   "author": "",
@@ -16,7 +17,11 @@
     "@babel/preset-env": "^7.14.1",
     "@babel/preset-react": "^7.13.13",
     "babel-loader": "^8.2.2",
+    "cors": "^2.8.5",
+    "dotenv": "^10.0.0",
+    "express": "^4.17.1",
     "lodash": "^4.17.21",
+    "morgan": "^1.10.0",
     "notyf": "^3.9.0",
     "polished": "^4.1.2",
     "react": "^17.0.2",
@@ -25,7 +30,6 @@
     "react-redux": "^7.2.4",
     "react-router-dom": "^5.2.0",
     "redux": "^4.1.0",
-    "redux-thunk": "^2.3.0",
     "regenerator-runtime": "^0.13.7",
     "styled-components": "^5.3.0",
     "webpack": "^5.37.0",
@@ -36,6 +40,7 @@
     "css-loader": "^5.2.4",
     "html-webpack-plugin": "^5.3.1",
     "mini-css-extract-plugin": "^1.6.0",
+    "nodemon": "^2.0.7",
     "webpack-dev-server": "^3.11.2"
   }
 }

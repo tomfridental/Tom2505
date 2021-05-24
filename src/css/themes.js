@@ -1,5 +1,5 @@
 const themes = {
-    heroloTheme: {
+    purpleTheme: {
         mainColor: '#674ea7'
     },
     blueTheme: {

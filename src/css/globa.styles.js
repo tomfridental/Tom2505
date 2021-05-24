@@ -2,17 +2,12 @@ import { createGlobalStyle } from 'styled-components'
 
 
 const GlobalStyles = createGlobalStyle`
-
-
-        html{
-            /* font-family: montserrat-regular,opensans-hebrew-regular,Arial,Helvetica,sans-serif; */
-            font-size: 10px;
+        html { 
+            font-size: 62.5%; 
         }
-
 
         body{
             font-family: montserrat-regular,opensans-hebrew-regular,Arial,Helvetica,sans-serif;
-            font-size: 1.4rem;
         }
 
         a{

@@ -4,14 +4,13 @@ import GlobalStyles from './css/globa.styles';
 import Themes from './css/themes';
 import TopBar from './components/topBar';
 import { HashRouter as Router, Route, Switch } from 'react-router-dom';
-import { SEARCH_PAGE, FAVORITES_PAGE } from './Consts';
-import SearchPage from './components/searchPage';
-import FavoritesPage from './components/favoritePage';
-import { useSelector } from 'react-redux';
+import { ADD_USERS_PAGE, VIEW_USERS_PAGE } from './Consts';
+import CreatePage from './components/createPage';
+import ViewPage from './components/viewUsers';
 
 const App = () => {
 
-    const { themeName } = useSelector(state => state.config);
+    const themeName = 'purpleTheme';
 
     return (
         <ThemeProvider theme={Themes[themeName]}>
@@ -20,11 +19,11 @@ const App = () => {
                 <Router>
                     <TopBar />
                     <Switch>
-                        <Route path={FAVORITES_PAGE}>
-                            <FavoritesPage />
+                        <Route path={VIEW_USERS_PAGE}>
+                            <ViewPage />
                         </Route>
-                        <Route path={SEARCH_PAGE}>
-                            <SearchPage />
+                        <Route path={ADD_USERS_PAGE}>
+                            <CreatePage />
                         </Route>
 
                     </Switch>
