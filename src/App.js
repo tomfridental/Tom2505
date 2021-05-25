@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled, { ThemeProvider } from 'styled-components';
 import GlobalStyles from './css/globa.styles';
 import Themes from './css/themes';
@@ -10,14 +10,18 @@ import ViewPage from './components/viewUsers';
 
 const App = () => {
 
-    const themeName = 'purpleTheme';
+    const [themeName, setThemeName] = useState('purpleTheme');
+
+    const toggleTheme = () => {
+        setThemeName(themeName === 'purpleTheme' ? 'blueTheme' : 'purpleTheme')
+    }
 
     return (
         <ThemeProvider theme={Themes[themeName]}>
             <Wrapper>
                 <GlobalStyles />
                 <Router>
-                    <TopBar />
+                    <TopBar toggleTheme={toggleTheme} />
                     <Switch>
                         <Route path={VIEW_USERS_PAGE}>
                             <ViewPage />

@@ -3,19 +3,14 @@ import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import { ADD_USERS_PAGE, VIEW_USERS_PAGE } from '../Consts';
 import { darken } from 'polished';
-// import { useDispatch, useSelector } from 'react-redux';
-// import { ACTION_SWITCH_THEME, ACTION_SWITCH_TEMP_UNIT, METRIC_UNIT } from '../state/reducers/configReducer';
 
-const TopBar = () => {
 
-    // const dispatch = useDispatch();
-    // const tempUnit = useSelector(state => state.config.tempUnit);
-    // const isMetricUnit = tempUnit === METRIC_UNIT;
+const TopBar = ({ toggleTheme }) => {
 
     return (
         <Wrapper>
             <NavigationBar>
-                {/* <Navigation onClick={() => dispatch({ type: ACTION_SWITCH_THEME })}>Change Theme</Navigation> */}
+                <Navigation onClick={toggleTheme}>Change Theme</Navigation>
             </NavigationBar>
 
             <NavigationBar>

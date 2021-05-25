@@ -1,12 +1,9 @@
 const mongoose    = require('mongoose');
 mongoose.Promise = require('bluebird');
 
+const { DB_USER, DB_NAME } = process.env
 
-
-  const {DB_HOST, DB_PORT, DB_NAME, API_HOST} = process.env
-
-// const uri = `mongodb://${DB_HOST}:${DB_PORT}/${DB_NAME}`
-const uri = `mongodb+srv://tom2505:ortaltom1@users.rudes.mongodb.net/UsersDB?retryWrites=true&w=majority`
+const uri = `mongodb+srv://${DB_USER}@users.rudes.mongodb.net/${DB_NAME}?retryWrites=true&w=majority`
 
 const connect = async ()=> {
     try{
