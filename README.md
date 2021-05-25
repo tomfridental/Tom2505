@@ -1,3 +1,6 @@
 # Tom2505
 
-Run npm start to start the project
+npm install <br>
+npm start
+
+open localhost:3030
