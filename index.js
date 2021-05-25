@@ -1,8 +1,10 @@
+require('dotenv').config()
 const express = require('express');
+const mongoose = require('mongoose');
 const path = require('path');
 const morgan = require('morgan');
 const userRouter = require('./src/server/routes/userRoutes');
-// const db = require('./server/db/connection')
+const db = require('./src/server/db/connection')
 const cors = require('cors')
 
 const app = express();
@@ -19,9 +21,10 @@ app.get('/', (req,res) => {
     res.send('Everythign is ok!')
 })
 
+db.connect();
 
-const server = app.listen( 3030, ()=> {
-    console.log(`Listening on 3030`)
+const server = app.listen(process.env.SERVER_PORT, ()=> {
+    console.log(`Listening on ${process.env.SERVER_PORT}`)
 })
 
 
