@@ -2,11 +2,12 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import { createUser } from '../../fetchHelper';
 import Processing from '../../utils/processing';
+import { EMAIL_REGEX } from '../../Consts';
 
-// const fields = ['firstName', 'lastName', 'email', 'password', 'discription'];
+
 const fields = [
-    { fieldName: 'firstName', title: 'First name' },
-    { fieldName: 'lastName', title: 'Last name' },
+    { fieldName: 'first_name', title: 'First name' },
+    { fieldName: 'last_name', title: 'Last name' },
     { fieldName: 'email', title: 'Email' },
     { fieldName: 'password', title: 'Password', type: 'password' },
     { fieldName: 'description', title: 'Description' },
@@ -26,18 +27,28 @@ const CreatePage = () => {
     }
 
     const submit = async () => {
-        // for (const field of fields) {
-        //     if (!user[field.fieldName]) {
-        //         setError(`Please enter ${field.title}`)
-        //         return;
-        //     }
-        // }
+        for (const field of fields) {
+            if (!user[field.fieldName]) {
+                setError(`Please enter ${field.title}`)
+                return;
+            }
+        }
+
+        if(!EMAIL_REGEX.test(user.email)){
+            setError(`Please enter valid email`)
+            return; 
+        }
 
         toggleFetching(true);
-        const res = await createUser();
-        console.log('res: ', res)
+        const res = await createUser(user);
+        if (res.msg) {
+            setFormDone(true);
+        }
+        else {
+            setError(res?.error || 'something went wrong')
+        }
+
         toggleFetching(false);
-        setFormDone(true);
     }
 
 
@@ -84,12 +95,14 @@ padding: 5rem;
 border: .1rem solid black;
 border-radius: .5rem;
 align-items: center;
+background-color: #F3D0D0;
 `
 
 const Input = styled.input`
 width: 25rem;
 height: 3rem;
 padding: 0 1.6rem;
+border-radius: .5rem;
 `
 
 const Box = styled.div`
@@ -110,7 +123,6 @@ const Title = styled.span`
 font-size: 1.6rem;
 display: flex;
 width: 10rem;
-/* border: 1px solid red; */
 `
 
 const Error = styled.span`

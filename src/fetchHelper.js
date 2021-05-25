@@ -1,5 +1,7 @@
 import { Notyf } from 'notyf';
+import { USERS_PAGENATION } from './Consts';
 import 'notyf/notyf.min.css';
+
 
 export const fetchGet = async (url, queryString) => {
 
@@ -13,6 +15,30 @@ export const fetchGet = async (url, queryString) => {
     }
     catch (err) {
         return handleError(err, url);
+    }
+}
+
+export const fetchPost = async (url, body) => {
+
+    const innerBody = body || {};
+
+    try {
+        let res = await fetch(`${window.location.protocol}//${url}`,
+            {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(innerBody)
+            });
+
+        if (res) {
+            res = await res.json();
+        }
+        return res;
+    }
+    catch (err) {
+        return handleError(err, url)
     }
 }
 
@@ -39,12 +65,12 @@ export const displayNotyf = (msg, props = {}) => {
 
 export const getUsers = async (usersIndex) => {
     const url = 'localhost:3030/api/user/getusers';
-    const res = await fetchGet(url, `index=${usersIndex}`);
-    console.log('res: ', res)
+    const res = await fetchGet(url, `index=${usersIndex}&limit=${USERS_PAGENATION}`);
     return res;
 }
 
-export const createUser = async() => {
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    return 'test';
+export const createUser = async (userInfo) => {
+    const url = 'localhost:3030/api/user/create';
+    const res = await fetchPost(url, userInfo);
+    return res;
 }

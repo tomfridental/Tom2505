@@ -2,16 +2,16 @@ require('dotenv').config()
 const express = require('express');
 const mongoose = require('mongoose');
 const path = require('path');
+const bodyParser = require('body-parser')
 const morgan = require('morgan');
 const userRouter = require('./src/server/routes/userRoutes');
 const db = require('./src/server/db/connection')
 const cors = require('cors')
 
 const app = express();
-app.use(express.json());
 app.use(morgan('dev'));
 app.use(cors());
-
+app.use(bodyParser.json()); 
 app.use(express.static(path.resolve('./build')))
 
 app.use('/api/user', userRouter)

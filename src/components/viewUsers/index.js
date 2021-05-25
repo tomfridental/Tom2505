@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { getUsers } from '../../fetchHelper';
 import Processing from '../../utils/processing';
 import User from './user';
+import { USERS_PAGENATION } from '../../Consts';
 
 const ViewUsersPage = () => {
 
@@ -23,7 +24,7 @@ const ViewUsersPage = () => {
     }
 
     const loadMoreUsers = async () => {
-        const newIndex = usersIndex + 15;
+        const newIndex = usersIndex + USERS_PAGENATION;
         const moreUsersRes = await getUsers(newIndex);
         const moreUsers = moreUsersRes?.Data || [];
         setUsers([...users, ...moreUsers]);
@@ -31,8 +32,6 @@ const ViewUsersPage = () => {
         setUserIndex(newIndex);
     }   
 
-    console.log('isMoreUsersAvailable: ', isMoreUsersAvailable)
-    console.log('usersIndex: ', usersIndex)
 
     return (
         <Wrapper>
@@ -44,11 +43,11 @@ const ViewUsersPage = () => {
                     :
                     <>
                         {users.map(user =>
-                            <PaddingBox key={user.id}>
+                            <PaddingBox key={user._id}>
                                 <User user={user}/>
                             </PaddingBox>
                         )}
-                        {isMoreUsersAvailable && <LoadMore onClick={loadMoreUsers}>load more</LoadMore>}
+                        {isMoreUsersAvailable && <LoadMore onClick={loadMoreUsers}>Load more</LoadMore>}
                     </>
             }
         </Wrapper >
@@ -72,7 +71,7 @@ margin-bottom: 3rem;
 `
 
 const LoadMore = styled.button`
-background-color: none
+background-color: none;
 font-weight: 600;
 font-size: 2rem;
 cursor: pointer;
