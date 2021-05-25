@@ -64,6 +64,7 @@ export const displayNotyf = (msg, props = {}) => {
 }
 
 export const getUsers = async (usersIndex) => {
+    console.log('hello world')
     const url = 'localhost:3030/api/user/getusers';
     const res = await fetchGet(url, `index=${usersIndex}&limit=${USERS_PAGENATION}`);
     return res;
