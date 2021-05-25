@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "webpack serve --mode development --open",
-    "build": "webpack --mode production && node index.js ",
+    "build": "webpack --mode production",
     "start": "node index.js",
     "dev:server": "nodemon index.js"
   },
