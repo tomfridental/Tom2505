@@ -38,7 +38,7 @@ router.post('/create', async (req, res) => {
     }
 })
 
-//Get Likes//
+//Get Users
 router.get('/getusers', async (req, res) => {
     try {
         const index = parseInt(req.query.index) || 0;
@@ -56,5 +56,6 @@ router.get('/getusers', async (req, res) => {
         res.json({ error: 'Something went wrong' })
     }
 })
+
 
 module.exports = router;
