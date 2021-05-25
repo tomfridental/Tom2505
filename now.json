@@ -14,7 +14,6 @@
         }
     ],
     "env": {
-        "SERVER_PORT": 3030,
         "DB_USER": "tom2505:tom2505",
         "DB_NAME": "UsersDB"
     }
