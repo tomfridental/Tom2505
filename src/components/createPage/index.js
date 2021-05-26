@@ -6,11 +6,11 @@ import { EMAIL_REGEX } from '../../Consts';
 
 
 const fields = [
-    { fieldName: 'first_name', title: 'First name' },
-    { fieldName: 'last_name', title: 'Last name' },
-    { fieldName: 'email', title: 'Email' },
-    { fieldName: 'password', title: 'Password', type: 'password' },
-    { fieldName: 'description', title: 'Description' },
+    { fieldName: 'first_name', title: 'First name', isRequired: true },
+    { fieldName: 'last_name', title: 'Last name', isRequired: true },
+    { fieldName: 'email', title: 'Email', isRequired: true },
+    { fieldName: 'password', title: 'Password', type: 'password', isRequired: true },
+    { fieldName: 'description', title: 'Description', isRequired: false },
 ];
 
 const CreatePage = () => {
@@ -28,15 +28,15 @@ const CreatePage = () => {
 
     const submit = async () => {
         for (const field of fields) {
-            if (!user[field.fieldName]) {
+            if (!user[field.fieldName] && field.isRequired) {
                 setError(`Please enter ${field.title}`)
                 return;
             }
         }
 
-        if(!EMAIL_REGEX.test(user.email)){
+        if (!EMAIL_REGEX.test(user.email)) {
             setError(`Please enter valid email`)
-            return; 
+            return;
         }
 
         toggleFetching(true);
